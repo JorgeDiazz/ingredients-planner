@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-ios-blue: #007AFF;
+  --color-ios-green: #30B853;
+  --color-ios-yellow: #F5A623;
+  --color-ios-red: #FF3B30;
+  --color-ios-gray-1: #8E8E93;
+  --color-ios-gray-2: #AEAEB2;
+  --color-ios-gray-3: #C7C7CC;
+  --color-ios-gray-4: #D1D1D6;
+  --color-ios-gray-5: #E5E5EA;
+  --color-ios-gray-6: #F2F2F7;
+  --color-ios-bg: #F5F5F0;
+  --color-ios-card: #FFFFFF;
+  --color-ios-label: #1A1A1A;
+  --color-ios-secondary-label: #3C3C43;
+  --color-ios-tertiary-label: #48484A;
+  --font-sans: 'Avenir Next', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-ios-bg);
+  color: var(--color-ios-label);
+  font-family: var(--font-sans);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+input, select, textarea {
+  font-size: 16px; /* Prevent zoom on iOS */
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes confirm-pop {
+  0% { transform: scale(0.85); opacity: 0; }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.modal-fade-in {
+  animation: modal-fade-in 0.2s ease-out;
+}
+
+.modal-slide-up {
+  animation: modal-slide-up 0.3s ease-out;
+}
+
+.confirm-pop {
+  animation: confirm-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
