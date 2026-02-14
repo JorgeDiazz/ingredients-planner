@@ -1,6 +1,6 @@
-# Planificador de Ingredientes
+# Ingredients Planner
 
-Aplicacion web para gestionar el inventario de tu cocina y generar listas de compras automaticamente. Toda la interfaz esta en espanol.
+A web app to manage your kitchen inventory and automatically generate shopping lists. The entire UI is in Spanish.
 
 ## Tech Stack
 
@@ -11,12 +11,12 @@ Aplicacion web para gestionar el inventario de tu cocina y generar listas de com
 
 ## Features
 
-- **Vista Cocina** — Inventario completo de ingredientes agrupados por categoria, con busqueda inteligente (insensible a mayusculas y acentos)
-- **Vista Compras** — Lista automatica de productos agotados o con poco stock, con resumen de cantidades
-- **Auto-categorizacion** — Clasifica productos automaticamente en categorias en espanol (Lacteos, Carnes y Mariscos, Verduras, Frutas, etc.) usando keywords en espanol e ingles
-- **Copiar lista** — Boton para copiar la lista de compras al portapapeles en formato `1. 2 Leche`
-- **Reabastecer** — Modal para registrar compras y actualizar el inventario
-- **CRUD completo** — Agregar, editar y eliminar productos con validaciones
+- **Kitchen View** — Full ingredient inventory grouped by category, with smart search (case and accent insensitive)
+- **Shopping View** — Auto-generated list of out-of-stock and low-stock items, with quantity summary
+- **Auto-categorization** — Automatically classifies products into Spanish categories (Dairy, Meat & Seafood, Vegetables, Fruits, etc.) using both Spanish and English keywords
+- **Copy List** — Copy the shopping list to clipboard in the format `1. 2 Leche`
+- **Restock** — Modal to register purchases and update inventory
+- **Full CRUD** — Add, edit, and delete products with validation
 
 ## Getting Started
 
@@ -60,7 +60,7 @@ src/
 │   ├── shopper/
 │   │   ├── ShopperView.tsx    # Shopping list view with copy + restock
 │   │   ├── ShoppingItem.tsx   # Individual shopping item row
-│   │   └── ShoppingList.tsx   # Grouped shopping list (Agotados / Quedan pocos)
+│   │   └── ShoppingList.tsx   # Grouped shopping list (out-of-stock / low stock)
 │   └── ui/                    # Reusable UI primitives
 │       ├── Badge.tsx
 │       ├── Button.tsx
@@ -85,24 +85,45 @@ src/
 
 Products are auto-categorized using Spanish and English keywords:
 
-| Categoria | Ejemplos |
-|---|---|
-| Lacteos | Leche, Queso, Yogurt, Huevos |
-| Carnes y Mariscos | Pollo, Carne de res, Tilapia, Atun |
-| Verduras | Tomate, Cebolla, Zanahoria, Lechuga |
-| Frutas | Mango, Fresa, Aguacate, Banana |
-| Granos y Cereales | Arroz, Pasta, Quinua, Granola |
-| Especias y Condimentos | Sal, Pimienta, Oregano, Comino |
-| Bebidas | Cafe, Jugo, Agua, Te |
-| Reposteria | Azucar, Chocolate, Miel, Harina |
-| Salsas y Aderezos | Mayonesa, Salsa, Vinagreta, Aceite |
-| Snacks y Botanas | Papitas, Galletas, Palomitas |
-| Otros | Anything unmatched |
+| Category (ES) | Translation | Examples |
+|---|---|---|
+| Lacteos | Dairy | Leche, Queso, Yogurt, Huevos |
+| Carnes y Mariscos | Meat & Seafood | Pollo, Carne de res, Tilapia, Atun |
+| Verduras | Vegetables | Tomate, Cebolla, Zanahoria, Lechuga |
+| Frutas | Fruits | Mango, Fresa, Aguacate, Banana |
+| Granos y Cereales | Grains & Cereals | Arroz, Pasta, Quinua, Granola |
+| Especias y Condimentos | Spices & Seasonings | Sal, Pimienta, Oregano, Comino |
+| Bebidas | Beverages | Cafe, Jugo, Agua, Te |
+| Reposteria | Baking | Azucar, Chocolate, Miel, Harina |
+| Salsas y Aderezos | Sauces & Dressings | Mayonesa, Salsa, Vinagreta, Aceite |
+| Snacks y Botanas | Snacks | Papitas, Galletas, Palomitas |
+| Otros | Other | Anything unmatched |
 
 ## Database
 
 SQLite database at `dev.db` (project root). Schema defined in `prisma/schema.prisma`.
 
-**Product model:** `id`, `name`, `category`, `quantity`, `minQuantity`, `unit`, `createdAt`, `updatedAt`
+```mermaid
+erDiagram
+    Product {
+        Int id PK "auto-increment"
+        String name
+        String category "default: Otros"
+        Float quantity "default: 0"
+        Float minQuantity "default: 1"
+        String unit "default: unidades"
+        DateTime createdAt "auto"
+        DateTime updatedAt "auto"
+    }
+```
 
-Default unit is `unidades`. Default category is `Otros`.
+### Status Logic
+
+A product's status is computed from `quantity` and `minQuantity`:
+
+```mermaid
+flowchart LR
+    A[quantity = 0] -->|missing| D["Shopping list"]
+    B[quantity < minQuantity] -->|low| D
+    C[quantity >= minQuantity] -->|full| E["Not in shopping list"]
+```
